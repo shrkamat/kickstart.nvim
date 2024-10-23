@@ -210,6 +210,12 @@ vim.keymap.set('v', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in brow
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- SK Keymaps
+vim.keymap.set('n', '<Tab>', ':bnext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
+vim.keymap.set('v', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
