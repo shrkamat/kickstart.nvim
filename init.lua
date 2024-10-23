@@ -221,6 +221,12 @@ vim.keymap.set('v', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in brow
 -- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
 -- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
+-- SK Keymaps
+vim.keymap.set('n', '<Tab>', ':bnext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
+vim.keymap.set('v', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -429,6 +435,15 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        defaults = require('telescope.themes').get_ivy {
+          -- Default configuration for telescope goes here:
+          -- config_key = value,
+          layout_config = {
+            height = 0.95,
+            width = 0.9,
+            prompt_position = 'top',
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -565,7 +580,7 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('=', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('=', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
           -- Find references for the word under your cursor.
           map('', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -696,9 +711,21 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         clangd = {},
+        astro = {},
+        html = {},
+        cssls = {},
+        tailwindcss = {},
         -- gopls = {},
         -- pyright = {},
-        rust_analyzer = {},
+        rust_analyzer = {
+          settings = {
+            ['rust-analyzer'] = {
+              cargo = {
+                allFeatures = true,
+              },
+            },
+          },
+        },
         harper_ls = {
           settings = {
             ['harper-ls'] = {
@@ -712,8 +739,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {},
 
         lua_ls = {
           -- cmd = { ... },
@@ -808,6 +834,7 @@ require('lazy').setup({
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         html = { 'prettierd', 'prettier', stop_after_first = true },
+        astro = { 'prettier-plugin-astro' },
       },
     },
   },
@@ -979,7 +1006,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'astro' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
