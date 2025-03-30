@@ -1,0 +1,1 @@
+{"cmake":{"prefix":"cmake","body":["all: build\/CMakeCache.txt","\tcmake --build build","","distclean:","\t@rm -rf build","","build\/CMakeCache.txt: CMakeLists.txt","\tcmake -S . -B build -GNinja"]}}
