@@ -426,6 +426,15 @@ require('lazy').setup({
         --   },
         -- },
         -- pickers = {}
+        defaults = require('telescope.themes').get_ivy {
+          -- Default configuration for telescope goes here:
+          -- config_key = value,
+          layout_config = {
+            height = 0.95,
+            width = 0.9,
+            prompt_position = 'top',
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
