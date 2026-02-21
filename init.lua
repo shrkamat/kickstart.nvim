@@ -227,6 +227,34 @@ vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', { desc = 'Previous buffer' })
 vim.keymap.set('n', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
 vim.keymap.set('v', '<leader>gx', ':BrowserSearch<CR>', { desc = 'Search in browser' })
 
+vim.keymap.set('n', '<leader>cc', function()
+  local width = 80
+  local line = vim.api.nvim_get_current_line()
+
+  -- Extract clean text
+  local text = line
+    :gsub('^%s*//%s*', '') -- remove //
+    :gsub('^[-%s]*', '') -- remove leading dashes/spaces
+    :gsub('[-%s]*$', '') -- remove trailing dashes/spaces
+
+  if #text == 0 then
+    return
+  end
+
+  -- 6 = "// " (3 chars) + 2 spaces around text + text itself handled separately
+  local pad = width - 6 - #text
+  if pad < 0 then
+    return
+  end
+
+  local left = math.floor(pad / 2)
+  local right = pad - left
+
+  local new_line = '// ' .. string.rep('-', left) .. ' ' .. text .. ' ' .. string.rep('-', right)
+
+  vim.api.nvim_set_current_line(new_line)
+end)
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -460,7 +488,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
       vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>ss', builtin.lsp_document_symbols, { desc = '[S]earch Document [S]ymbols' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -716,7 +744,7 @@ require('lazy').setup({
         cssls = {},
         tailwindcss = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {},
         rust_analyzer = {
           settings = {
             ['rust-analyzer'] = {
@@ -774,6 +802,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'clang-format',
+        'eslint_d',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -826,15 +855,13 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        javascript = { 'eslint_d' },
+        javascriptreact = { 'eslint_d' },
+        typescript = { 'eslint_d' },
+        typescriptreact = { 'eslint_d' },
         -- cpp = { "clang_format" },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        astro = { 'prettier-plugin-astro' },
       },
     },
   },
@@ -898,6 +925,15 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+
+        ['<CR>'] = { 'select_and_accept', 'fallback' },
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+        ['<C-p>'] = { 'select_prev', 'fallback_to_mappings' },
+        ['<C-n>'] = { 'select_next', 'fallback_to_mappings' },
+
+        ['<S-Tab>'] = { 'select_prev', 'fallback' },
+        ['<Tab>'] = { 'select_next', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
