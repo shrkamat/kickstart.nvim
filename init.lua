@@ -700,7 +700,7 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
 
-        -- ts_ls = {},
+        ts_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -967,9 +967,7 @@ require('lazy').setup({
       highlight = { enable = true },
       indent = { enable = true },
     },
-    config = function(_, opts)
-      require('nvim-treesitter.configs').setup(opts)
-    end,
+    config = function(_, opts) require('nvim-treesitter.configs').setup(opts) end,
   },
   {
     'akinsho/toggleterm.nvim',
