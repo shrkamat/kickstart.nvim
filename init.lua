@@ -671,21 +671,8 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         clangd = {},
-        astro = {},
-        html = {},
-        cssls = {},
-        tailwindcss = {},
         -- gopls = {},
-        pyright = {},
-        rust_analyzer = {
-          settings = {
-            ['rust-analyzer'] = {
-              cargo = {
-                allFeatures = true,
-              },
-            },
-          },
-        },
+        -- pyright = {},
         harper_ls = {
           settings = {
             ['harper-ls'] = {
@@ -699,8 +686,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-
-        ts_ls = {},
+        -- ts_ls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -714,7 +700,6 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'clang-format',
-        'eslint_d',
         -- You can add other tools here that you want Mason to install
       })
 
@@ -787,10 +772,6 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        javascript = { 'eslint_d' },
-        javascriptreact = { 'eslint_d' },
-        typescript = { 'eslint_d' },
-        typescriptreact = { 'eslint_d' },
         -- cpp = { "clang_format" },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
@@ -960,14 +941,14 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    build = ':TSUpdate',
-    opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-    },
-    config = function(_, opts) require('nvim-treesitter.configs').setup(opts) end,
+    config = function()
+      local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+      require('nvim-treesitter').install(filetypes)
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = filetypes,
+        callback = function() vim.treesitter.start() end,
+      })
+    end,
   },
   {
     'akinsho/toggleterm.nvim',
@@ -987,25 +968,6 @@ require('lazy').setup({
         },
       },
     },
-  },
-  {
-    'github/copilot.vim',
-  },
-  {
-    'yetone/avante.nvim',
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-      'stevearc/dressing.nvim',
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      {
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = { file_types = { 'markdown', 'Avante' } },
-        ft = { 'markdown', 'Avante' },
-      },
-    },
-    build = 'make',
-    opts = { provider = 'copilot' },
   },
   {
     'chrisgrieser/nvim-scissors',
